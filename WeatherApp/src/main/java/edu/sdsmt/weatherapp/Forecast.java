@@ -8,7 +8,18 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -18,7 +29,7 @@ import java.net.URL;
 public class Forecast implements Parcelable{
 
     private static final String TAG = "";
-    private ForecastLocation _forecastLocation;
+
 
     // http://developer.weatherbug.com/docs/read/WeatherBug_API_JSON
     // NOTE:  See example JSON in doc folder.
@@ -31,9 +42,33 @@ public class Forecast implements Parcelable{
     private String _imageURL = "http://img.weather.weatherbug.com/forecast/icons/localized/500x420/en/trans/%s.png";
 
     public Bitmap Image;
+    public String ChancePrecip;
+    public String DateTiime;
+    public String Desc;
+    public String DewPoint;
+    public String FeelsLike;
+    public String FeelsLikeLabel;
+    public String Humidity;
+    public String Icon;
+    public String SkyCover;
+    public String Temperature;
+    public String WindDirection;
+    public String WindSpeed;
 
     public Forecast()
     {
+        ChancePrecip =null;
+        DateTiime = null;
+        Desc = null;
+        DewPoint = null;
+        FeelsLike = null;
+        FeelsLikeLabel= null;
+        Humidity = null;
+        Icon = null;
+        SkyCover = null;
+        Temperature= null;
+        WindDirection = null;
+        WindSpeed = null;
         Image = null;
     }
 
@@ -89,14 +124,27 @@ public class Forecast implements Parcelable{
 
             try
             {
-                // HINT: You will use the following classes to make API call.
-                //                 URL
-                //       InputStreamReader
-                //       JsonReader
+                StringBuilder stringBuilder = new StringBuilder();
+                HttpClient client = new DefaultHttpClient();
 
+                HttpResponse response = client.execute(new HttpGet(String.format(_URL, params[0])));
+                if( response.getStatusLine().getStatusCode() == 200)
+                {
+                    HttpEntity entity = response.getEntity();
+                    InputStream content = entity.getContent();
 
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(content));
 
+                    //Read the JSON
+                    String line;
+                    while((line = reader.readLine())!=null)
+                    {
+                        stringBuilder.append(line);
+                    }
 
+                    forecast = readJSON(stringBuilder.toString());
+                    return forecast;
+                }
 
             }
             catch (IllegalStateException e)
@@ -145,6 +193,38 @@ public class Forecast implements Parcelable{
             }
 
             return iconBitmap;
+        }
+        public Forecast readJSON(String jsonString)
+        {
+            Forecast forecast = null;
+            try
+            {
+                JSONObject jToken = new JSONObject(jsonString);
+                if(jToken.has("forecastHourlyList")==true)
+                {
+                    JSONObject forecastInfo = jToken.getJSONObject("forecastHourlyList");
+
+                    forecast.ChancePrecip = forecastInfo.getString("chancePrecip");
+                    forecast.DateTiime = forecastInfo.getString("dateTime");
+                    forecast.Desc = forecastInfo.getString("desc");
+                    forecast.DewPoint = forecastInfo.getString("dewPoint");
+                    forecast.FeelsLike = forecastInfo.getString("feelsLike");
+                    forecast.FeelsLikeLabel = forecastInfo.getString("feelsLikeLabel");
+                    forecast.Humidity = forecastInfo.getString("humidity");
+                    forecast.Icon = forecastInfo.getString("icon");
+                    forecast.SkyCover = forecastInfo.getString("skyCover");
+                    forecast.Temperature = forecastInfo.getString("temperature");
+                    forecast.WindDirection = forecastInfo.getString("windDirection");
+                    forecast.WindSpeed = forecastInfo.getString("windSpeed");
+
+                }
+            }
+            catch (JSONException e)
+            {
+                throw new RuntimeException(e);
+            }
+
+            return forecast;
         }
 
     }
