@@ -75,6 +75,18 @@ public class Forecast implements Parcelable{
     private Forecast(Parcel parcel)
     {
         Image = parcel.readParcelable(Bitmap.class.getClassLoader());
+        ChancePrecip = parcel.readString();
+        DateTiime = parcel.readString();
+        Desc = parcel.readString();
+        DewPoint = parcel.readString();
+        FeelsLike = parcel.readString();
+        FeelsLikeLabel= parcel.readString();
+        Humidity = parcel.readString();
+        Icon = parcel.readString();
+        SkyCover = parcel.readString();
+        Temperature= parcel.readString();
+        WindDirection = parcel.readString();
+        WindSpeed = parcel.readString();
     }
 
     @Override
@@ -87,6 +99,18 @@ public class Forecast implements Parcelable{
     public void writeToParcel(Parcel dest, int flags)
     {
         dest.writeParcelable(Image, 0);
+        dest.writeString(ChancePrecip);
+        dest.writeString(DateTiime);
+        dest.writeString(Desc);
+        dest.writeString(DewPoint);
+        dest.writeString(FeelsLike);
+        dest.writeString(FeelsLikeLabel);
+        dest.writeString(Humidity);
+        dest.writeString(Icon);
+        dest.writeString(SkyCover);
+        dest.writeString(Temperature);
+        dest.writeString(WindDirection);
+        dest.writeString(WindSpeed);
     }
 
     public static final Parcelable.Creator<Forecast> Creator = new Parcelable.Creator<Forecast>()
@@ -194,6 +218,7 @@ public class Forecast implements Parcelable{
 
             return iconBitmap;
         }
+
         public Forecast readJSON(String jsonString)
         {
             Forecast forecast = null;
@@ -216,7 +241,6 @@ public class Forecast implements Parcelable{
                     forecast.Temperature = forecastInfo.getString("temperature");
                     forecast.WindDirection = forecastInfo.getString("windDirection");
                     forecast.WindSpeed = forecastInfo.getString("windSpeed");
-
                 }
             }
             catch (JSONException e)
