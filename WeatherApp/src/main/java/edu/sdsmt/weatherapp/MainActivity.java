@@ -5,9 +5,7 @@ import android.app.FragmentManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-public class MainActivity extends Activity {
-
-    private final static String BUNDLE_KEY = "the_key";
+public class MainActivity extends Activity implements IForecastControlListener{
     private final static String FRAGMENT_FORECAST_TAG = "Forecast";
     private String[] _cities;
     private FragmentManager _fragmentManager;
@@ -32,12 +30,6 @@ public class MainActivity extends Activity {
         {
             //get the city array from resources
             _cities = getResources().getStringArray(R.array.cityArray);
-
-            _fragmentForecast = new FragmentForecast();
-
-            _fragmentManager.beginTransaction()
-                            .replace(R.id.container, _fragmentForecast, FRAGMENT_FORECAST_TAG)
-                            .commit();
         }
 
         showForecast(TextUtils.split(_cities[0], "\\|")[0]);
@@ -47,13 +39,40 @@ public class MainActivity extends Activity {
     private void showForecast(String zipCode)
     {
         //use bundle to pass arguments to fragment
+        Bundle bundle = new Bundle();
+        bundle.putString(FragmentForecast.ZIP_CODE_KEY, zipCode);
 
-        //Bundle bundle = new Bundle();
-        //bundle.putString("key", "value")
-        //ForecastFragment.setArguments(bundle);
+        _fragmentForecast = new FragmentForecast();
+        _fragmentForecast.setArguments(bundle);
 
-        //Hint: FragmentManager().beginTransaction()
+        _fragmentManager.beginTransaction()
+                        .replace(R.id.container, _fragmentForecast, FRAGMENT_FORECAST_TAG)
+                        .commit();
+    }
+
+    @Override
+    public void getLocation(String zipCode) {
+        ForecastLocation.LoadForecastLocation asyncTask = new ForecastLocation.LoadForecastLocation(null, new ForecastWebListeners());
+        asyncTask.execute(zipCode);
+    }
+
+    @Override
+    public void getForecast(Forecast forecast) {
+
+    }
+
+    private class ForecastWebListeners implements IListeners
+    {
+
+        @Override
+        public void onLocationLoaded(ForecastLocation forecastLocation) {
+            _fragmentForecast.setForecastLocation(forecastLocation);
+        }
+
+        @Override
+        public void onForecastLoaded(Forecast forecast) {
 
 
+        }
     }
 }

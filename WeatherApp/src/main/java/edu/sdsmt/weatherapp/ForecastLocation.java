@@ -25,8 +25,8 @@ public class ForecastLocation {
 
     // http://developer.weatherbug.com/docs/read/WeatherBug_API_JSON
     // NOTE:  See example JSON in doc folder.
-    private String _URL = "http://i.wxbug.net/REST/Direct/GetLocation.ashx?zip=" + "%s" +
-            "&api_key=k4dpzhefdma958cdw7xue3j2";
+    private static final String _URL = "http://i.wxbug.net/REST/Direct/GetLocation.ashx?zip=" + "%s" +
+        "&api_key=k4dpzhefdma958cdw7xue3j2";
 
 
     public ForecastLocation()
@@ -42,12 +42,10 @@ public class ForecastLocation {
     public String State;
     public String Country;
 
-    public class LoadForecastLocation extends AsyncTask<String, Void, ForecastLocation>
+    public static class LoadForecastLocation extends AsyncTask<String, Void, ForecastLocation>
     {
         private IListeners _listener;
         private Context _context;
-
-
 
         public LoadForecastLocation(Context context, IListeners listener)
         {
@@ -103,7 +101,7 @@ public class ForecastLocation {
 
         public ForecastLocation readJSON(String jsonString)
         {
-            ForecastLocation forecastLocation = null;
+            ForecastLocation forecastLocation = new ForecastLocation();
             try
             {
                 JSONObject jToken = new JSONObject(jsonString);
