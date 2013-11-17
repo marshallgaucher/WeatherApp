@@ -2,6 +2,8 @@ package edu.sdsmt.weatherapp;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.apache.http.HttpEntity;
@@ -19,7 +21,7 @@ import java.io.InputStreamReader;
 /**
  * Created by Marshall Gaucher on 11/12/13.
  */
-public class ForecastLocation {
+public class ForecastLocation implements Parcelable {
 
     private static final String TAG = "";
 
@@ -28,6 +30,10 @@ public class ForecastLocation {
     private static final String _URL = "http://i.wxbug.net/REST/Direct/GetLocation.ashx?zip=" + "%s" +
         "&api_key=k4dpzhefdma958cdw7xue3j2";
 
+    public String ZipCode;
+    public String City;
+    public String State;
+    public String Country;
 
     public ForecastLocation()
     {
@@ -37,10 +43,26 @@ public class ForecastLocation {
         Country = null;
     }
 
-    public String ZipCode;
-    public String City;
-    public String State;
-    public String Country;
+    public ForecastLocation(Parcel parcel)
+    {
+        ZipCode = parcel.readString();
+        City = parcel.readString();
+        State = parcel.readString();
+        Country = parcel.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(ZipCode);
+        parcel.writeString(City);
+        parcel.writeString(State);
+        parcel.writeString(Country);
+    }
 
     public static class LoadForecastLocation extends AsyncTask<String, Void, ForecastLocation>
     {

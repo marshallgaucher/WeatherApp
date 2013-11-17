@@ -17,8 +17,8 @@
 
 
     <string-array name="cityArray">
-        <item>57301|Mitchell</item>
         <item>57701|Rapid City</item>
+        <item>57301|Mitchell</item>
     </string-array>
 
 

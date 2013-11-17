@@ -25,7 +25,14 @@ public class FragmentForecast extends Fragment {
     public static final String LOCATION_KEY = "key_location";
     public static final String FORECAST_KEY = "key_forecast";
 
+
+    private View _rootView;
     private IForecastControlListener _listener;
+
+    private  String _zipCode;
+    private Forecast _forecast;
+    private ForecastLocation _forecastLocation;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -42,21 +49,60 @@ public class FragmentForecast extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        outState.putString(ZIP_CODE_KEY, _zipCode);
+
+        if(_forecastLocation != null)
+        {
+            outState.putParcelable(LOCATION_KEY, _forecastLocation);
+        }
+        if(_forecast != null)
+        {
+            outState.putParcelable(FORECAST_KEY, _forecast);
+        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, null);
+
+        _rootView = inflater.inflate(R.layout.fragment_main, null);
 
         Bundle argumentBundle = getArguments();
 
         if(argumentBundle != null)
         {
-            String zipCode = argumentBundle.getString(ZIP_CODE_KEY);
-            _listener.getLocation(zipCode);
+            _zipCode = argumentBundle.getString(ZIP_CODE_KEY);
+            _listener.getLocation(_zipCode);
         }
 
-        return rootView;
+        if(savedInstanceState != null)
+        {
+            _zipCode = savedInstanceState.getString(ZIP_CODE_KEY);
+
+            if(savedInstanceState.containsKey(LOCATION_KEY))
+            {
+                _forecastLocation = savedInstanceState.getParcelable(LOCATION_KEY);
+                setForecastLocation(_forecastLocation);
+
+                if(savedInstanceState.containsKey(FORECAST_KEY))
+                {
+                    _forecast = savedInstanceState.getParcelable(FORECAST_KEY);
+                    setForecast(_forecast);
+                }
+                else
+                {
+                    _listener.getForecast(_zipCode);
+                }
+            }
+            else
+            {
+                _listener.getLocation(_zipCode);
+            }
+        }
+
+
+        return _rootView;
     }
 
     @Override
@@ -76,8 +122,9 @@ public class FragmentForecast extends Fragment {
 
     public void setForecastLocation(ForecastLocation location)
     {
-        View rootView = getView();
-        TextView locationTextView = (TextView) rootView.findViewById(R.id.textViewLocation);
+        _forecastLocation = location;
+
+        TextView locationTextView = (TextView) _rootView.findViewById(R.id.textViewLocation);
 
         locationTextView.setText(location.City + ", " + location.State);
 
@@ -86,17 +133,18 @@ public class FragmentForecast extends Fragment {
 
     public void setForecast(Forecast forecast)
     {
+        _forecast = forecast;
+
         String formattedDateTime = formatDateTime(forecast.DateTime);
-        View rootView = getView();
 
-        TextView textViewTemp = (TextView) rootView.findViewById(R.id.textViewTemp);
-        TextView textViewFeelsLikeTemp = (TextView) rootView.findViewById(R.id.textViewFeelsLikeTemp);
-        TextView textViewHumidity = (TextView) rootView.findViewById(R.id.textViewHumidity);
-        TextView textViewChanceOfPrecipitation = (TextView) rootView.findViewById(R.id.textViewChanceOfPrecip);
-        TextView textViewAsOfTime = (TextView) rootView.findViewById(R.id.textViewAsOfTime);
-        ImageView imageViewImageForecast = (ImageView) rootView.findViewById(R.id.imageForecast);
+        TextView textViewTemp = (TextView) _rootView.findViewById(R.id.textViewTemp);
+        TextView textViewFeelsLikeTemp = (TextView) _rootView.findViewById(R.id.textViewFeelsLikeTemp);
+        TextView textViewHumidity = (TextView) _rootView.findViewById(R.id.textViewHumidity);
+        TextView textViewChanceOfPrecipitation = (TextView) _rootView.findViewById(R.id.textViewChanceOfPrecip);
+        TextView textViewAsOfTime = (TextView) _rootView.findViewById(R.id.textViewAsOfTime);
+        ImageView imageViewImageForecast = (ImageView) _rootView.findViewById(R.id.imageForecast);
 
-        RelativeLayout progressLayout = (RelativeLayout) rootView.findViewById(R.id.layoutProgress);
+        RelativeLayout progressLayout = (RelativeLayout) _rootView.findViewById(R.id.layoutProgress);
 
         textViewTemp.setText(forecast.Temperature);
         textViewFeelsLikeTemp.setText(forecast.FeelsLike);

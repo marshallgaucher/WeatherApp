@@ -43,9 +43,7 @@ public class Forecast implements Parcelable{
             "&api_key=q3wj56tqghv7ybd8dy6gg4e7";
 
     // http://developer.weatherbug.com/docs/read/List_of_Icons
-
     private static final String _imageURL = "http://img.weather.weatherbug.com/forecast/icons/localized/500x420/en/trans/%s.png";
-    public static final int BITMAP_SAMPLE_SIZE = -1;
 
     public Bitmap Image;
     public String ChancePrecipitation;
@@ -173,7 +171,7 @@ public class Forecast implements Parcelable{
                     }
 
                     forecast = readJSON(stringBuilder.toString());
-                    forecast.Image = readIconBitmap(forecast.Icon, BITMAP_SAMPLE_SIZE);
+                    forecast.Image = readIconBitmap(forecast.Icon, bitmapSampleSize);
                     return forecast;
                 }
 
