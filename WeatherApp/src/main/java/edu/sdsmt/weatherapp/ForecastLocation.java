@@ -105,7 +105,7 @@ public class ForecastLocation {
             try
             {
                 JSONObject jToken = new JSONObject(jsonString);
-                if(jToken.has("location")==true)
+                if(jToken.has("location"))
                 {
                     JSONObject location = jToken.getJSONObject("location");
 

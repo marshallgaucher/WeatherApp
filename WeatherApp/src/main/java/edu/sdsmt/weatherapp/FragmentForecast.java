@@ -6,7 +6,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by Marshall Gaucher on 11/12/13.
@@ -69,8 +77,42 @@ public class FragmentForecast extends Fragment {
     public void setForecastLocation(ForecastLocation location)
     {
         View rootView = getView();
-        TextView _locationTextView = (TextView) rootView.findViewById(R.id.textViewLocation);
+        TextView locationTextView = (TextView) rootView.findViewById(R.id.textViewLocation);
 
-        _locationTextView.setText(location.City + ", " + location.State);
+        locationTextView.setText(location.City + ", " + location.State);
+
+        _listener.getForecast(location.ZipCode);
+    }
+
+    public void setForecast(Forecast forecast)
+    {
+        String formattedDateTime = formatDateTime(forecast.DateTime);
+        View rootView = getView();
+
+        TextView textViewTemp = (TextView) rootView.findViewById(R.id.textViewTemp);
+        TextView textViewFeelsLikeTemp = (TextView) rootView.findViewById(R.id.textViewFeelsLikeTemp);
+        TextView textViewHumidity = (TextView) rootView.findViewById(R.id.textViewHumidity);
+        TextView textViewChanceOfPrecipitation = (TextView) rootView.findViewById(R.id.textViewChanceOfPrecip);
+        TextView textViewAsOfTime = (TextView) rootView.findViewById(R.id.textViewAsOfTime);
+        ImageView imageViewImageForecast = (ImageView) rootView.findViewById(R.id.imageForecast);
+
+        RelativeLayout progressLayout = (RelativeLayout) rootView.findViewById(R.id.layoutProgress);
+
+        textViewTemp.setText(forecast.Temperature);
+        textViewFeelsLikeTemp.setText(forecast.FeelsLike);
+        textViewHumidity.setText(forecast.Humidity);
+        textViewChanceOfPrecipitation.setText(forecast.ChancePrecipitation);
+        textViewAsOfTime.setText(formattedDateTime);
+        imageViewImageForecast.setImageBitmap(forecast.Image);
+
+        progressLayout.setVisibility(View.INVISIBLE);
+    }
+
+    public String formatDateTime(String timestamp)
+    {
+        Date date = new Date(Long.valueOf(timestamp));
+        DateFormat dateFormat = new SimpleDateFormat("EEE MMM d, h:mm a", Locale.US);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("gmt"));
+        return dateFormat.format(date);
     }
 }

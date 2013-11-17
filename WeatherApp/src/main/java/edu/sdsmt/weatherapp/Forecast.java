@@ -13,6 +13,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,6 +23,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by Marshall Gaucher on 11/12/13.
@@ -33,18 +38,19 @@ public class Forecast implements Parcelable{
 
     // http://developer.weatherbug.com/docs/read/WeatherBug_API_JSON
     // NOTE:  See example JSON in doc folder.
-    private String _URL = "http://i.wxbug.net/REST/Direct/GetForecastHourly.ashx?zip=" + "%s" +
+    private static final String _URL = "http://i.wxbug.net/REST/Direct/GetForecastHourly.ashx?zip=" + "%s" +
             "&ht=t&ht=i&ht=cp&ht=fl&ht=h" +
             "&api_key=q3wj56tqghv7ybd8dy6gg4e7";
 
     // http://developer.weatherbug.com/docs/read/List_of_Icons
 
-    private String _imageURL = "http://img.weather.weatherbug.com/forecast/icons/localized/500x420/en/trans/%s.png";
+    private static final String _imageURL = "http://img.weather.weatherbug.com/forecast/icons/localized/500x420/en/trans/%s.png";
+    public static final int BITMAP_SAMPLE_SIZE = -1;
 
     public Bitmap Image;
-    public String ChancePrecip;
-    public String DateTiime;
-    public String Desc;
+    public String ChancePrecipitation;
+    public String DateTime;
+    public String Description;
     public String DewPoint;
     public String FeelsLike;
     public String FeelsLikeLabel;
@@ -57,9 +63,9 @@ public class Forecast implements Parcelable{
 
     public Forecast()
     {
-        ChancePrecip =null;
-        DateTiime = null;
-        Desc = null;
+        ChancePrecipitation =null;
+        DateTime = null;
+        Description = null;
         DewPoint = null;
         FeelsLike = null;
         FeelsLikeLabel= null;
@@ -75,9 +81,9 @@ public class Forecast implements Parcelable{
     private Forecast(Parcel parcel)
     {
         Image = parcel.readParcelable(Bitmap.class.getClassLoader());
-        ChancePrecip = parcel.readString();
-        DateTiime = parcel.readString();
-        Desc = parcel.readString();
+        ChancePrecipitation = parcel.readString();
+        DateTime = parcel.readString();
+        Description = parcel.readString();
         DewPoint = parcel.readString();
         FeelsLike = parcel.readString();
         FeelsLikeLabel= parcel.readString();
@@ -99,9 +105,9 @@ public class Forecast implements Parcelable{
     public void writeToParcel(Parcel dest, int flags)
     {
         dest.writeParcelable(Image, 0);
-        dest.writeString(ChancePrecip);
-        dest.writeString(DateTiime);
-        dest.writeString(Desc);
+        dest.writeString(ChancePrecipitation);
+        dest.writeString(DateTime);
+        dest.writeString(Description);
         dest.writeString(DewPoint);
         dest.writeString(FeelsLike);
         dest.writeString(FeelsLikeLabel);
@@ -128,7 +134,7 @@ public class Forecast implements Parcelable{
         }
     };
 
-    public class LoadForecast extends AsyncTask<String, Void, Forecast>
+    public static class LoadForecast extends AsyncTask<String, Void, Forecast>
     {
         private IListeners _listener;
         private Context _context;
@@ -161,12 +167,13 @@ public class Forecast implements Parcelable{
 
                     //Read the JSON
                     String line;
-                    while((line = reader.readLine())!=null)
+                    while((line = reader.readLine()) != null)
                     {
                         stringBuilder.append(line);
                     }
 
                     forecast = readJSON(stringBuilder.toString());
+                    forecast.Image = readIconBitmap(forecast.Icon, BITMAP_SAMPLE_SIZE);
                     return forecast;
                 }
 
@@ -221,26 +228,34 @@ public class Forecast implements Parcelable{
 
         public Forecast readJSON(String jsonString)
         {
-            Forecast forecast = null;
+            List<Forecast> forecastList = new Vector<Forecast>();
             try
             {
                 JSONObject jToken = new JSONObject(jsonString);
-                if(jToken.has("forecastHourlyList")==true)
+                if(jToken.has("forecastHourlyList"))
                 {
-                    JSONObject forecastInfo = jToken.getJSONObject("forecastHourlyList");
 
-                    forecast.ChancePrecip = forecastInfo.getString("chancePrecip");
-                    forecast.DateTiime = forecastInfo.getString("dateTime");
-                    forecast.Desc = forecastInfo.getString("desc");
-                    forecast.DewPoint = forecastInfo.getString("dewPoint");
-                    forecast.FeelsLike = forecastInfo.getString("feelsLike");
-                    forecast.FeelsLikeLabel = forecastInfo.getString("feelsLikeLabel");
-                    forecast.Humidity = forecastInfo.getString("humidity");
-                    forecast.Icon = forecastInfo.getString("icon");
-                    forecast.SkyCover = forecastInfo.getString("skyCover");
-                    forecast.Temperature = forecastInfo.getString("temperature");
-                    forecast.WindDirection = forecastInfo.getString("windDirection");
-                    forecast.WindSpeed = forecastInfo.getString("windSpeed");
+                    JSONArray forecastInfoList = jToken.getJSONArray("forecastHourlyList");
+                    for(int i = 0; i < forecastInfoList.length(); i++)
+                    {
+                        JSONObject forecastInfo = forecastInfoList.getJSONObject(i);
+                        Forecast forecast = new Forecast();
+
+                        forecast.ChancePrecipitation = forecastInfo.getString("chancePrecip");
+                        forecast.DateTime = forecastInfo.getString("dateTime");
+                        forecast.Description = forecastInfo.getString("desc");
+                        forecast.DewPoint = forecastInfo.getString("dewPoint");
+                        forecast.FeelsLike = forecastInfo.getString("feelsLike");
+                        forecast.FeelsLikeLabel = forecastInfo.getString("feelsLikeLabel");
+                        forecast.Humidity = forecastInfo.getString("humidity");
+                        forecast.Icon = forecastInfo.getString("icon");
+                        forecast.SkyCover = forecastInfo.getString("skyCover");
+                        forecast.Temperature = forecastInfo.getString("temperature");
+                        forecast.WindDirection = forecastInfo.getString("windDir");
+                        forecast.WindSpeed = forecastInfo.getString("windSpeed");
+
+                        forecastList.add(forecast);
+                    }
                 }
             }
             catch (JSONException e)
@@ -248,9 +263,8 @@ public class Forecast implements Parcelable{
                 throw new RuntimeException(e);
             }
 
-            return forecast;
+
+            return forecastList.get(0);
         }
-
     }
-
 }

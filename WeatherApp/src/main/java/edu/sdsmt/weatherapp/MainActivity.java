@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 public class MainActivity extends Activity implements IForecastControlListener{
     private final static String FRAGMENT_FORECAST_TAG = "Forecast";
+    private final static String CITIES_KEY = "Cities";
     private String[] _cities;
     private FragmentManager _fragmentManager;
     private FragmentForecast _fragmentForecast;
@@ -31,9 +32,29 @@ public class MainActivity extends Activity implements IForecastControlListener{
             //get the city array from resources
             _cities = getResources().getStringArray(R.array.cityArray);
         }
+        else
+        {
+            //get the city array from bundle
+            _cities = savedInstanceState.getStringArray(CITIES_KEY);
+
+        }
 
         showForecast(TextUtils.split(_cities[0], "\\|")[0]);
 
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        _cities = savedInstanceState.getStringArray(CITIES_KEY);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putStringArray(CITIES_KEY, _cities);
     }
 
     private void showForecast(String zipCode)
@@ -57,13 +78,13 @@ public class MainActivity extends Activity implements IForecastControlListener{
     }
 
     @Override
-    public void getForecast(Forecast forecast) {
-
+    public void getForecast(String zipCode) {
+        Forecast.LoadForecast asyncTask = new Forecast.LoadForecast(null, new ForecastWebListeners());
+        asyncTask.execute(zipCode);
     }
 
     private class ForecastWebListeners implements IListeners
     {
-
         @Override
         public void onLocationLoaded(ForecastLocation forecastLocation) {
             _fragmentForecast.setForecastLocation(forecastLocation);
@@ -71,8 +92,7 @@ public class MainActivity extends Activity implements IForecastControlListener{
 
         @Override
         public void onForecastLoaded(Forecast forecast) {
-
-
+            _fragmentForecast.setForecast(forecast);
         }
     }
 }

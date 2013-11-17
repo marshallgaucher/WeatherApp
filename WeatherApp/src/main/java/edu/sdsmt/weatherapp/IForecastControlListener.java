@@ -5,5 +5,5 @@ package edu.sdsmt.weatherapp;
  */
 public interface IForecastControlListener {
     public void getLocation(String zipCode);
-    public void getForecast(Forecast forecast);
+    public void getForecast(String zipCode);
 }
