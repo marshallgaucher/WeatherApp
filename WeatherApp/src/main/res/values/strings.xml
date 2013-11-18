@@ -8,7 +8,7 @@
    <string name="labelTemp">Temperature:&#160;</string>
     <string name="labelFeelsLikeTemp">Feels Like: &#160; </string>
     <string name="labelHumidity">Humidity:&#160;</string>
-    <string name="labelChanceOfPrecip">Chance of Percipitation:&#160;</string>
+    <string name="labelChanceOfPrecip">Chance of Precipitation:&#160;</string>
     <string name="labelAsOfTime">As Of:&#160;</string>
 
     <string name="pendingWebCall">pending</string>
