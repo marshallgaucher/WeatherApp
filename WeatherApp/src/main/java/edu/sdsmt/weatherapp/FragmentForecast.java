@@ -44,6 +44,7 @@ public class FragmentForecast extends Fragment {
     public void onCreate(Bundle argumentBundle)
     {
         super.onCreate(argumentBundle);
+
     }
 
     @Override
@@ -146,10 +147,10 @@ public class FragmentForecast extends Fragment {
 
         RelativeLayout progressLayout = (RelativeLayout) _rootView.findViewById(R.id.layoutProgress);
 
-        textViewTemp.setText(forecast.Temperature);
-        textViewFeelsLikeTemp.setText(forecast.FeelsLike);
-        textViewHumidity.setText(forecast.Humidity);
-        textViewChanceOfPrecipitation.setText(forecast.ChancePrecipitation);
+        textViewTemp.setText(forecast.Temperature + "F");
+        textViewFeelsLikeTemp.setText(forecast.FeelsLike +"F");
+        textViewHumidity.setText(forecast.Humidity +"%");
+        textViewChanceOfPrecipitation.setText(forecast.ChancePrecipitation + "%");
         textViewAsOfTime.setText(formattedDateTime);
         imageViewImageForecast.setImageBitmap(forecast.Image);
 
