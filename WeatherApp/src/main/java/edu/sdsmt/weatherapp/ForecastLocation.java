@@ -64,6 +64,7 @@ public class ForecastLocation implements Parcelable {
     {
         private IListeners _listener;
         private Context _context;
+        private String _errorMessage = "";
 
         public LoadForecastLocation(Context context, IListeners listener)
         {
@@ -102,13 +103,16 @@ public class ForecastLocation implements Parcelable {
             }
             catch (IllegalStateException e)
             {
-                Toast.makeText(_context,e.toString()  + params[0], Common.TOAST_DURATION).show();
+                _errorMessage = e.toString() + params[0];
                 Log.e(TAG, e.toString() + params[0]);
+                return null;
+
             }
             catch (Exception e)
             {
-                Toast.makeText(_context,e.toString(), Common.TOAST_DURATION).show();
+                _errorMessage = e.toString();
                 Log.e(TAG, e.toString());
+                return null;
             }
 
             return null;
@@ -116,7 +120,11 @@ public class ForecastLocation implements Parcelable {
 
         protected void onPostExecute(ForecastLocation forecastLoc)
         {
-            _listener.onLocationLoaded(forecastLoc);
+            if (_errorMessage.equalsIgnoreCase("")) {
+                _listener.onLocationLoaded(forecastLoc);
+            } else {
+                Toast.makeText(_context, _errorMessage, Toast.LENGTH_SHORT).show();
+            }
         }
 
         public ForecastLocation readJSON(String jsonString)
@@ -138,9 +146,9 @@ public class ForecastLocation implements Parcelable {
             }
             catch (JSONException e)
             {
-                Toast.makeText(_context, e.toString(), Common.TOAST_DURATION).show();
+                _errorMessage = e.toString();
                 Log.e(TAG, e.toString());
-                throw new RuntimeException(e);
+                return null;
             }
 
            return forecastLocation;

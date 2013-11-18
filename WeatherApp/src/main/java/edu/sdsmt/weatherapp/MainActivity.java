@@ -28,15 +28,8 @@ public class MainActivity extends Activity implements IForecastControlListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         //check if the device has a network connection
-        if (Common.isNetworkAvailable(this)) {
-           _isNetworkConnected = true;
-        }
-        else
-        {
-            _isNetworkConnected = false;
-        }
+        _isNetworkConnected = Common.isNetworkAvailable(this);
 
         // Get a reference to the fragment manager to
         // be used for adding/replacing fragments.
@@ -54,7 +47,9 @@ public class MainActivity extends Activity implements IForecastControlListener
 
         }
 
-        showForecast(TextUtils.split(_cities[0], "\\|")[0]);
+        if (_cities != null && _cities.length > 0) {
+            showForecast(TextUtils.split(_cities[0], "\\|")[0]);
+        }
 
     }
 
@@ -109,13 +104,14 @@ public class MainActivity extends Activity implements IForecastControlListener
 
     @Override
     public void getLocation(String zipCode) {
+
         Context context = getApplicationContext();
 
         if (_isNetworkConnected) {
             _locationAsyncTask = new ForecastLocation.LoadForecastLocation(context, new ForecastWebListeners());
             _locationAsyncTask.execute(zipCode);
         } else {
-            Toast.makeText(context, R.string.toastNoWifiLocation, Common.TOAST_DURATION ).show();
+            Toast.makeText(context, R.string.toastNoWifiLocation, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -130,7 +126,7 @@ public class MainActivity extends Activity implements IForecastControlListener
         }
         else
         {
-            Toast.makeText(context, R.string.toastNoWifiWeather, Common.TOAST_DURATION ).show();
+            Toast.makeText(context, R.string.toastNoWifiWeather, Toast.LENGTH_SHORT).show();
         }
     }
 

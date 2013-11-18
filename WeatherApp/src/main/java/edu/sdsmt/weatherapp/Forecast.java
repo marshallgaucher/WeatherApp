@@ -125,6 +125,7 @@ public class Forecast implements Parcelable{
     {
         private IListeners _listener;
         private Context _context;
+        private String _errorMessage = "";
 
         private int bitmapSampleSize = -1;
 
@@ -166,13 +167,15 @@ public class Forecast implements Parcelable{
             }
             catch (IllegalStateException e)
             {
-                Toast.makeText(_context,e.toString() + params[0], Common.TOAST_DURATION).show();
+                _errorMessage = e.toString() + params[0];
                 Log.e(TAG, e.toString() + params[0]);
+                return null;
             }
             catch (Exception e)
             {
-                Toast.makeText(_context,e.toString(), Common.TOAST_DURATION).show();
+                _errorMessage = e.toString();
                 Log.e(TAG, e.toString());
+                return null;
             }
 
             return forecast;
@@ -180,7 +183,11 @@ public class Forecast implements Parcelable{
 
         protected void onPostExecute(Forecast forecast)
         {
-            _listener.onForecastLoaded(forecast);
+            if (_errorMessage.equalsIgnoreCase("")) {
+                _listener.onForecastLoaded(forecast);
+            } else {
+                Toast.makeText(_context, _errorMessage, Toast.LENGTH_SHORT).show();
+            }
         }
 
         private Bitmap readIconBitmap(String conditionString, int bitmapSampleSize)
@@ -200,18 +207,21 @@ public class Forecast implements Parcelable{
             }
             catch (MalformedURLException e)
             {
-                Toast.makeText(_context,e.toString() , Common.TOAST_DURATION).show();
+                _errorMessage = e.toString();
                 Log.e(TAG, e.toString());
+                return null;
             }
             catch (IOException e)
             {
-                Toast.makeText(_context,e.toString(), Common.TOAST_DURATION).show();
+                _errorMessage = e.toString();
                 Log.e(TAG, e.toString());
+                return null;
             }
             catch (Exception e)
             {
-                Toast.makeText(_context,e.toString(), Common.TOAST_DURATION).show();
+                _errorMessage = e.toString();
                 Log.e(TAG, e.toString());
+                return null;
             }
 
             return iconBitmap;
@@ -251,11 +261,10 @@ public class Forecast implements Parcelable{
             }
             catch (JSONException e)
             {
-                Toast.makeText(_context,e.toString(), Common.TOAST_DURATION).show();
+                _errorMessage = e.toString();
                 Log.e(TAG, e.toString());
-                throw new RuntimeException(e);
+                return null;
             }
-
 
             return forecastList.get(0);
         }
