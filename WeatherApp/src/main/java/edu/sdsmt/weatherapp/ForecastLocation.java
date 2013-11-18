@@ -23,9 +23,6 @@ import java.io.InputStreamReader;
  * Created by Marshall Gaucher on 11/12/13.
  */
 public class ForecastLocation implements Parcelable {
-
-    private static final String TAG = "WeatherApp";
-
     public String ZipCode;
     public String City;
     public String State;
@@ -104,14 +101,14 @@ public class ForecastLocation implements Parcelable {
             catch (IllegalStateException e)
             {
                 _errorMessage = e.toString() + params[0];
-                Log.e(TAG, e.toString() + params[0]);
+                Log.e(Common.TAG, e.toString() + params[0]);
                 return null;
 
             }
             catch (Exception e)
             {
                 _errorMessage = e.toString();
-                Log.e(TAG, e.toString());
+                Log.e(Common.TAG, e.toString());
                 return null;
             }
 
@@ -147,7 +144,7 @@ public class ForecastLocation implements Parcelable {
             catch (JSONException e)
             {
                 _errorMessage = e.toString();
-                Log.e(TAG, e.toString());
+                Log.e(Common.TAG, e.toString());
                 return null;
             }
 

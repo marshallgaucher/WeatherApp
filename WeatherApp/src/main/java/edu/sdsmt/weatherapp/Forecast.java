@@ -31,9 +31,6 @@ import java.util.Vector;
  * Created by Marshall Gaucher on 11/12/13.
  */
 public class Forecast implements Parcelable{
-
-    private static final String TAG = "WeatherApp";
-
     public Bitmap Image;
     public String ChancePrecipitation;
     public String DateTime;
@@ -168,13 +165,13 @@ public class Forecast implements Parcelable{
             catch (IllegalStateException e)
             {
                 _errorMessage = e.toString() + params[0];
-                Log.e(TAG, e.toString() + params[0]);
+                Log.e(Common.TAG, e.toString() + params[0]);
                 return null;
             }
             catch (Exception e)
             {
                 _errorMessage = e.toString();
-                Log.e(TAG, e.toString());
+                Log.e(Common.TAG, e.toString());
                 return null;
             }
 
@@ -208,19 +205,19 @@ public class Forecast implements Parcelable{
             catch (MalformedURLException e)
             {
                 _errorMessage = e.toString();
-                Log.e(TAG, e.toString());
+                Log.e(Common.TAG, e.toString());
                 return null;
             }
             catch (IOException e)
             {
                 _errorMessage = e.toString();
-                Log.e(TAG, e.toString());
+                Log.e(Common.TAG, e.toString());
                 return null;
             }
             catch (Exception e)
             {
                 _errorMessage = e.toString();
-                Log.e(TAG, e.toString());
+                Log.e(Common.TAG, e.toString());
                 return null;
             }
 
@@ -262,7 +259,7 @@ public class Forecast implements Parcelable{
             catch (JSONException e)
             {
                 _errorMessage = e.toString();
-                Log.e(TAG, e.toString());
+                Log.e(Common.TAG, e.toString());
                 return null;
             }
 

@@ -9,7 +9,7 @@ import android.net.NetworkInfo;
  * Created by mcrypt on 11/18/13.
  */
 public class Common {
-    public static final int TOAST_DURATION = 30;
+    public static final String TAG = "WeatherApp";
 
     // http://developer.weatherbug.com/docs/read/WeatherBug_API_JSON
     // NOTE:  See example JSON in doc folder.
