@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,8 +24,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -34,16 +33,6 @@ import java.util.Vector;
 public class Forecast implements Parcelable{
 
     private static final String TAG = "";
-
-
-    // http://developer.weatherbug.com/docs/read/WeatherBug_API_JSON
-    // NOTE:  See example JSON in doc folder.
-    private static final String _URL = "http://i.wxbug.net/REST/Direct/GetForecastHourly.ashx?zip=" + "%s" +
-            "&ht=t&ht=i&ht=cp&ht=fl&ht=h" +
-            "&api_key=q3wj56tqghv7ybd8dy6gg4e7";
-
-    // http://developer.weatherbug.com/docs/read/List_of_Icons
-    private static final String _imageURL = "http://img.weather.weatherbug.com/forecast/icons/localized/500x420/en/trans/%s.png";
 
     public Bitmap Image;
     public String ChancePrecipitation;
@@ -149,13 +138,12 @@ public class Forecast implements Parcelable{
         {
             Forecast forecast = null;
 
-
             try
             {
                 StringBuilder stringBuilder = new StringBuilder();
                 HttpClient client = new DefaultHttpClient();
 
-                HttpResponse response = client.execute(new HttpGet(String.format(_URL, params[0])));
+                HttpResponse response = client.execute(new HttpGet(String.format(Common.FORECAST_URL, params[0])));
                 if( response.getStatusLine().getStatusCode() == 200)
                 {
                     HttpEntity entity = response.getEntity();
@@ -178,10 +166,12 @@ public class Forecast implements Parcelable{
             }
             catch (IllegalStateException e)
             {
+                Toast.makeText(_context,e.toString() + params[0], Common.TOAST_DURATION).show();
                 Log.e(TAG, e.toString() + params[0]);
             }
             catch (Exception e)
             {
+                Toast.makeText(_context,e.toString(), Common.TOAST_DURATION).show();
                 Log.e(TAG, e.toString());
             }
 
@@ -198,7 +188,7 @@ public class Forecast implements Parcelable{
             Bitmap iconBitmap = null;
             try
             {
-                URL weatherURL = new URL(String.format(_imageURL, conditionString));
+                URL weatherURL = new URL(String.format(Common.IMAGE_URL, conditionString));
 
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 if (bitmapSampleSize != -1)
@@ -210,14 +200,17 @@ public class Forecast implements Parcelable{
             }
             catch (MalformedURLException e)
             {
+                Toast.makeText(_context,e.toString() , Common.TOAST_DURATION).show();
                 Log.e(TAG, e.toString());
             }
             catch (IOException e)
             {
+                Toast.makeText(_context,e.toString(), Common.TOAST_DURATION).show();
                 Log.e(TAG, e.toString());
             }
             catch (Exception e)
             {
+                Toast.makeText(_context,e.toString(), Common.TOAST_DURATION).show();
                 Log.e(TAG, e.toString());
             }
 
@@ -258,6 +251,8 @@ public class Forecast implements Parcelable{
             }
             catch (JSONException e)
             {
+                Toast.makeText(_context,e.toString(), Common.TOAST_DURATION).show();
+                Log.e(TAG, e.toString());
                 throw new RuntimeException(e);
             }
 

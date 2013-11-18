@@ -22,23 +22,26 @@ public class MainActivity extends Activity implements IForecastControlListener
     private ForecastLocation.LoadForecastLocation _locationAsyncTask;
 
     private Boolean _isNetworkConnected;
-    private static final int TOAST_DURATION = 10;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        _isNetworkConnected = false;
+
 
         //check if the device has a network connection
         ConnectivityManager connectionManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo wifi = connectionManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-
         if (wifi.isConnected())
         {
            _isNetworkConnected = true;
+        }
+        else
+        {
+            _isNetworkConnected = false;
         }
 
         // Get a reference to the fragment manager to
@@ -121,7 +124,8 @@ public class MainActivity extends Activity implements IForecastControlListener
        else
        {
            Context context = getApplicationContext();
-           Toast.makeText(context, R.string.toastNoWifi, TOAST_DURATION ).show();
+           Toast.makeText(context, R.string.toastNoWifi, Common.TOAST_DURATION ).show();
+
        }
     }
 
