@@ -14,7 +14,8 @@
     <string name="pendingWebCall">pending</string>
     <string name="progressMessage">Loading Current Forecast</string>
     <string name="toastNullData">Data could not be read from web service.</string>
-    <string name="toastNoWifi">Wifi not connected. Weather data will not be loaded.</string>
+    <string name="toastNoWifiLocation">No Wifi connection. Unable to retrieve location.</string>
+    <string name="toastNoWifiWeather">No Wifi connection. Unable to retrieve weather.</string>
     <string name="unavailable">Unavailable</string>
 
 

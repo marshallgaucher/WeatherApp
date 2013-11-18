@@ -124,8 +124,7 @@ public class MainActivity extends Activity implements IForecastControlListener
        else
        {
            Context context = getApplicationContext();
-           Toast.makeText(context, R.string.toastNoWifi, Common.TOAST_DURATION ).show();
-
+           Toast.makeText(context, R.string.toastNoWifiLocation, Common.TOAST_DURATION ).show();
        }
     }
 
@@ -136,6 +135,11 @@ public class MainActivity extends Activity implements IForecastControlListener
         {
             _forecastAsyncTask = new Forecast.LoadForecast(null, new ForecastWebListeners());
             _forecastAsyncTask.execute(zipCode);
+        }
+        else
+        {
+            Context context = getApplicationContext();
+            Toast.makeText(context, R.string.toastNoWifiWeather, Common.TOAST_DURATION ).show();
         }
     }
 
