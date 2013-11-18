@@ -32,7 +32,7 @@ import java.util.Vector;
  */
 public class Forecast implements Parcelable{
 
-    private static final String TAG = "";
+    private static final String TAG = "WeatherApp";
 
     public Bitmap Image;
     public String ChancePrecipitation;

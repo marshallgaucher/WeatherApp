@@ -24,7 +24,7 @@ import java.io.InputStreamReader;
  */
 public class ForecastLocation implements Parcelable {
 
-    private static final String TAG = "";
+    private static final String TAG = "WeatherApp";
 
     public String ZipCode;
     public String City;

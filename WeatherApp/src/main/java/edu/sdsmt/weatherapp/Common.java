@@ -1,5 +1,10 @@
 package edu.sdsmt.weatherapp;
 
+import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 /**
  * Created by mcrypt on 11/18/13.
  */
@@ -19,4 +24,14 @@ public class Common {
     public static final String FORECAST_URL = "http://i.wxbug.net/REST/Direct/GetForecastHourly.ashx?zip=" + "%s" +
             "&ht=t&ht=i&ht=cp&ht=fl&ht=h" +
             "&api_key=q3wj56tqghv7ybd8dy6gg4e7";
+
+    // From: http://www.stackoverflow.com/questions/4238921/android-detect-whether-there-is-an-internet-connection-available
+    public static boolean isNetworkAvailable(Activity activity) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 }

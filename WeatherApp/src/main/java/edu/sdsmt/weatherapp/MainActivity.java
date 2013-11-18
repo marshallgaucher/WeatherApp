@@ -3,8 +3,6 @@ package edu.sdsmt.weatherapp;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -32,11 +30,7 @@ public class MainActivity extends Activity implements IForecastControlListener
 
 
         //check if the device has a network connection
-        ConnectivityManager connectionManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo wifi = connectionManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-        if (wifi.isConnected())
-        {
+        if (Common.isNetworkAvailable(this)) {
            _isNetworkConnected = true;
         }
         else
@@ -115,30 +109,27 @@ public class MainActivity extends Activity implements IForecastControlListener
 
     @Override
     public void getLocation(String zipCode) {
+        Context context = getApplicationContext();
 
-       if(_isNetworkConnected)
-       {
-            _locationAsyncTask = new ForecastLocation.LoadForecastLocation(null, new ForecastWebListeners());
+        if (_isNetworkConnected) {
+            _locationAsyncTask = new ForecastLocation.LoadForecastLocation(context, new ForecastWebListeners());
             _locationAsyncTask.execute(zipCode);
-       }
-       else
-       {
-           Context context = getApplicationContext();
-           Toast.makeText(context, R.string.toastNoWifiLocation, Common.TOAST_DURATION ).show();
-       }
+        } else {
+            Toast.makeText(context, R.string.toastNoWifiLocation, Common.TOAST_DURATION ).show();
+        }
     }
 
     @Override
     public void getForecast(String zipCode) {
+        Context context = getApplicationContext();
 
         if(_isNetworkConnected)
         {
-            _forecastAsyncTask = new Forecast.LoadForecast(null, new ForecastWebListeners());
+            _forecastAsyncTask = new Forecast.LoadForecast(context, new ForecastWebListeners());
             _forecastAsyncTask.execute(zipCode);
         }
         else
         {
-            Context context = getApplicationContext();
             Toast.makeText(context, R.string.toastNoWifiWeather, Common.TOAST_DURATION ).show();
         }
     }

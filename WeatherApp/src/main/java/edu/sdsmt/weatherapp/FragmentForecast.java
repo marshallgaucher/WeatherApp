@@ -2,9 +2,6 @@ package edu.sdsmt.weatherapp;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,7 +71,10 @@ public class FragmentForecast extends Fragment {
 
         Bundle argumentBundle = getArguments();
 
-
+        //call after activity is attached so we don't get a null exception from get activity
+        if (!Common.isNetworkAvailable(getActivity())) {
+            setNoWifiForecast();
+        }
 
         if(argumentBundle != null)
         {
@@ -108,14 +108,7 @@ public class FragmentForecast extends Fragment {
         }
 
 
-        //call after activity is attached so we don't get a null exception from get activity
-        ConnectivityManager connectionManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifi = connectionManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-        if (!wifi.isConnected())
-        {
-            setNoWifiForecast();
-        }
 
 
         return _rootView;
@@ -174,6 +167,7 @@ public class FragmentForecast extends Fragment {
 
     public void setNoWifiForecast()
     {
+        TextView textViewLocation = (TextView) _rootView.findViewById(R.id.textViewLocation);
         TextView textViewTemp = (TextView) _rootView.findViewById(R.id.textViewTemp);
         TextView textViewFeelsLikeTemp = (TextView) _rootView.findViewById(R.id.textViewFeelsLikeTemp);
         TextView textViewHumidity = (TextView) _rootView.findViewById(R.id.textViewHumidity);
@@ -181,6 +175,7 @@ public class FragmentForecast extends Fragment {
         TextView textViewAsOfTime = (TextView) _rootView.findViewById(R.id.textViewAsOfTime);
         ImageView imageViewImageForecast = (ImageView) _rootView.findViewById(R.id.imageForecast);
 
+        textViewLocation.setText(R.string.unavailable);
         textViewTemp.setText(R.string.unavailable);
         textViewFeelsLikeTemp.setText(R.string.unavailable);
         textViewHumidity.setText(R.string.unavailable);
