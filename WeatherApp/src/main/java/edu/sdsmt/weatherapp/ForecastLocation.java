@@ -120,11 +120,11 @@ public class ForecastLocation implements Parcelable {
 
         protected void onPostExecute(ForecastLocation forecastLoc)
         {
-            if (_errorMessage.equalsIgnoreCase("")) {
-                _listener.onLocationLoaded(forecastLoc);
-            } else {
+            if (!_errorMessage.equalsIgnoreCase("")) {
                 Toast.makeText(_context, _errorMessage, Toast.LENGTH_SHORT).show();
             }
+
+            _listener.onLocationLoaded(forecastLoc);
         }
 
         public ForecastLocation readJSON(String jsonString)

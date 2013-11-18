@@ -183,11 +183,11 @@ public class Forecast implements Parcelable{
 
         protected void onPostExecute(Forecast forecast)
         {
-            if (_errorMessage.equalsIgnoreCase("")) {
-                _listener.onForecastLoaded(forecast);
-            } else {
+            if (!_errorMessage.equalsIgnoreCase("")) {
                 Toast.makeText(_context, _errorMessage, Toast.LENGTH_SHORT).show();
             }
+
+            _listener.onForecastLoaded(forecast);
         }
 
         private Bitmap readIconBitmap(String conditionString, int bitmapSampleSize)

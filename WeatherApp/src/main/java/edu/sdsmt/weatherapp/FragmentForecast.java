@@ -131,6 +131,11 @@ public class FragmentForecast extends Fragment {
 
     public void setForecastLocation(ForecastLocation location)
     {
+        if (location == null) {
+            setNoWifiForecast();
+            return;
+        }
+
         _forecastLocation = location;
 
         TextView locationTextView = (TextView) _rootView.findViewById(R.id.textViewLocation);
@@ -142,6 +147,10 @@ public class FragmentForecast extends Fragment {
 
     public void setForecast(Forecast forecast)
     {
+        if (forecast == null) {
+            setNoWifiForecast();
+            return;
+        }
         _forecast = forecast;
 
         String formattedDateTime = formatDateTime(forecast.DateTime);
