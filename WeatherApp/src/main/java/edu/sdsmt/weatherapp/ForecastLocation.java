@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Created by Marshall Gaucher on 11/12/13.
+ * Created by Marshall Gaucher and Dean Laganiere on 11/12/13.
  */
 public class ForecastLocation implements Parcelable {
     public String ZipCode;
@@ -28,6 +28,9 @@ public class ForecastLocation implements Parcelable {
     public String State;
     public String Country;
 
+    /**
+     * ForecastLocation constructor
+     */
     public ForecastLocation()
     {
         ZipCode = null;
@@ -36,6 +39,11 @@ public class ForecastLocation implements Parcelable {
         Country = null;
     }
 
+    /**
+     * Reads the Forecast Location from the parcel
+     *
+     * @param parcel
+     */
     public ForecastLocation(Parcel parcel)
     {
         ZipCode = parcel.readString();
@@ -49,6 +57,12 @@ public class ForecastLocation implements Parcelable {
         return 0;
     }
 
+    /**
+     * Writes the Weather Location to parcel object.
+     *
+     * @param parcel
+     * @param i
+     */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(ZipCode);
@@ -57,18 +71,33 @@ public class ForecastLocation implements Parcelable {
         parcel.writeString(Country);
     }
 
+    /**
+     * Async Task to load forecast location.
+     */
     public static class LoadForecastLocation extends AsyncTask<String, Void, ForecastLocation>
     {
         private IListeners _listener;
         private Context _context;
         private String _errorMessage = "";
 
+        /**
+         * Sets the context and listener interface.
+         *
+         * @param context
+         * @param listener
+         */
         public LoadForecastLocation(Context context, IListeners listener)
         {
             _context = context;
             _listener = listener;
         }
 
+        /**
+         * Connects to the Forecast Location URL and parse the JSON Weather object
+         *
+         * @param params
+         * @return
+         */
         protected ForecastLocation doInBackground(String... params)
         {
             ForecastLocation forecastLoc = null;
@@ -115,6 +144,11 @@ public class ForecastLocation implements Parcelable {
             return null;
         }
 
+        /**
+         * Inform the listener interface of when the forecast location has been loaded.
+         *
+         * @param forecastLoc
+         */
         protected void onPostExecute(ForecastLocation forecastLoc)
         {
             if (!_errorMessage.equalsIgnoreCase("")) {
@@ -124,6 +158,12 @@ public class ForecastLocation implements Parcelable {
             _listener.onLocationLoaded(forecastLoc);
         }
 
+        /**
+         * Read the JSON object and the information from the JSON object reader
+         *
+         * @param jsonString
+         * @return
+         */
         public ForecastLocation readJSON(String jsonString)
         {
             ForecastLocation forecastLocation = new ForecastLocation();
@@ -150,8 +190,6 @@ public class ForecastLocation implements Parcelable {
 
            return forecastLocation;
         }
-
-
 
     }
 

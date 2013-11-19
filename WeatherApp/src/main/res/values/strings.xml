@@ -2,10 +2,9 @@
 <resources>
 
     <string name="app_name">DeanMarshallWeatherApp</string>
-    <string name="hello_world">Hello world beeeeeee!</string>
     <string name="action_settings">Settings</string>
 
-   <string name="labelTemp">Temperature:&#160;</string>
+    <string name="labelTemp">Temperature:&#160;</string>
     <string name="labelFeelsLikeTemp">Feels Like: &#160; </string>
     <string name="labelHumidity">Humidity:&#160;</string>
     <string name="labelChanceOfPrecip">Chance of Precipitation:&#160;</string>

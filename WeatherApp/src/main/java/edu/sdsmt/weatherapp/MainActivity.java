@@ -7,6 +7,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+/**
+ * Created by Marshall Gaucher and Dean Laganiere on 11/12/13.
+ *
+ * MainActivity that implements IForecastControlListener to call async Tasks
+ * to retrieve location and weather information from API.
+ */
 public class MainActivity extends Activity implements IForecastControlListener
 {
     private final static String FRAGMENT_FORECAST_TAG = "ForecastFragment";
@@ -22,6 +28,13 @@ public class MainActivity extends Activity implements IForecastControlListener
     private Boolean _isNetworkConnected;
 
 
+    /**
+     * Set the main activity view and check for internet connection.
+     * If we have the internet connection we allow our async tasks to call
+     * the API URLS to retrieve our JSON objects.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -53,6 +66,11 @@ public class MainActivity extends Activity implements IForecastControlListener
 
     }
 
+    /**
+     * Get a given city from the bundle.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -60,6 +78,11 @@ public class MainActivity extends Activity implements IForecastControlListener
         _cities = savedInstanceState.getStringArray(CITIES_KEY);
     }
 
+    /**
+     * Preserve the city array inside the bundle.
+     *
+     * @param outState
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -67,6 +90,9 @@ public class MainActivity extends Activity implements IForecastControlListener
         outState.putStringArray(CITIES_KEY, _cities);
 }
 
+    /**
+     * Cancel our async tasks on rotate state so we dont crash the app.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -82,6 +108,11 @@ public class MainActivity extends Activity implements IForecastControlListener
         }
     }
 
+    /**
+     * Show the given foreast from a zip code.
+     *
+     * @param zipCode
+     */
     private void showForecast(String zipCode)
     {
         //use bundle to pass arguments to fragment
@@ -102,6 +133,11 @@ public class MainActivity extends Activity implements IForecastControlListener
         }
     }
 
+    /**
+     * Call the async ask to get the forecast location based on its zip code.
+     *
+     * @param zipCode
+     */
     @Override
     public void getLocation(String zipCode) {
 
@@ -115,6 +151,11 @@ public class MainActivity extends Activity implements IForecastControlListener
         }
     }
 
+    /**
+     * Call the async task to get the forecast information based on the zip code.
+     *
+     * @param zipCode
+     */
     @Override
     public void getForecast(String zipCode) {
         Context context = getApplicationContext();
@@ -130,6 +171,11 @@ public class MainActivity extends Activity implements IForecastControlListener
         }
     }
 
+    /**
+     * Listen for the Location and Forecast callbacks and the set the corresponding
+     * fragement information for Location and Forecast.
+     *
+     */
     private class ForecastWebListeners implements IListeners
     {
         @Override

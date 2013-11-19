@@ -6,7 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 /**
- * Created by mcrypt on 11/18/13.
+ * Created by Marshall Gaucher and Dean Laganiere on 11/18/13.
  */
 public class Common {
     public static final String TAG = "WeatherApp";
@@ -25,6 +25,12 @@ public class Common {
             "&ht=t&ht=i&ht=cp&ht=fl&ht=h" +
             "&api_key=q3wj56tqghv7ybd8dy6gg4e7";
 
+    /**
+     * Checks if device has internet connection.
+     *
+     * @param activity
+     * @return
+     */
     // From: http://www.stackoverflow.com/questions/4238921/android-detect-whether-there-is-an-internet-connection-available
     public static boolean isNetworkAvailable(Activity activity) {
         ConnectivityManager connectivityManager =

@@ -17,14 +17,13 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * Created by Marshall Gaucher on 11/12/13.
+ * Created by Marshall Gaucher and Dean Laganiere on 11/12/13.
  */
 public class FragmentForecast extends Fragment {
 
     public static final String ZIP_CODE_KEY = "key_zip_code";
     public static final String LOCATION_KEY = "key_location";
     public static final String FORECAST_KEY = "key_forecast";
-
 
     private View _rootView;
     private IForecastControlListener _listener;
@@ -33,12 +32,18 @@ public class FragmentForecast extends Fragment {
     private Forecast _forecast;
     private ForecastLocation _forecastLocation;
 
+    /**
+     * Attach the activity and listener interface.
+     *
+     * @param activity
+     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         _listener = (IForecastControlListener) activity;
     }
+
 
     @Override
     public void onCreate(Bundle argumentBundle)
@@ -47,6 +52,11 @@ public class FragmentForecast extends Fragment {
 
     }
 
+    /**
+     * Put the parceable into the bundle to preserve the bundle on rotate state
+     * or other lifecycle events for the forecast and forecast location objects.
+     * @param outState
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -64,6 +74,16 @@ public class FragmentForecast extends Fragment {
 
     }
 
+    /**
+     * Inflate the view with the forecast fragment. If there is no internet connection populate
+     * the corresponding textview fields with "unavailable", otherwise get the location and weather
+     * information from our parceable object with its associated key.
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -107,10 +127,6 @@ public class FragmentForecast extends Fragment {
             }
         }
 
-
-
-
-
         return _rootView;
     }
 
@@ -129,6 +145,11 @@ public class FragmentForecast extends Fragment {
         super.onDetach();
     }
 
+    /**
+     * Set the forecast location text view field assuming we have a valid forecast location.
+     *
+     * @param location
+     */
     public void setForecastLocation(ForecastLocation location)
     {
         if (location == null) {
@@ -145,6 +166,13 @@ public class FragmentForecast extends Fragment {
         _listener.getForecast(location.ZipCode);
     }
 
+    /**
+     * If we have a valid forecast object, populate the corresponding text view fields
+     * with data. If we don't have a valid forecast object call the function to populate
+     * textview fields with "unavailable"
+     *
+     * @param forecast
+     */
     public void setForecast(Forecast forecast)
     {
         if (forecast == null) {
@@ -164,8 +192,8 @@ public class FragmentForecast extends Fragment {
 
         RelativeLayout progressLayout = (RelativeLayout) _rootView.findViewById(R.id.layoutProgress);
 
-        textViewTemp.setText(forecast.Temperature + "F");
-        textViewFeelsLikeTemp.setText(forecast.FeelsLike +"F");
+        textViewTemp.setText(forecast.Temperature + "\u2109");
+        textViewFeelsLikeTemp.setText(forecast.FeelsLike + "\u2109" );
         textViewHumidity.setText(forecast.Humidity +"%");
         textViewChanceOfPrecipitation.setText(forecast.ChancePrecipitation + "%");
         textViewAsOfTime.setText(formattedDateTime);
@@ -174,6 +202,10 @@ public class FragmentForecast extends Fragment {
         progressLayout.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Set the textview fields with "unavailable" if we can not retrieve the weather and location
+     * information.
+     */
     public void setNoWifiForecast()
     {
         TextView textViewLocation = (TextView) _rootView.findViewById(R.id.textViewLocation);
@@ -192,10 +224,17 @@ public class FragmentForecast extends Fragment {
         textViewAsOfTime.setText(R.string.unavailable);
         imageViewImageForecast.setImageResource(R.drawable.mrt);
 
+        //make the progress dialog invisible so it doesn't show up
         RelativeLayout progressLayout = (RelativeLayout) _rootView.findViewById(R.id.layoutProgress);
         progressLayout.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Format time stamp to MST from the return JSON timestamp object
+     *
+     * @param timestamp
+     * @return
+     */
     public String formatDateTime(String timestamp)
     {
         Date date = new Date(Long.valueOf(timestamp));

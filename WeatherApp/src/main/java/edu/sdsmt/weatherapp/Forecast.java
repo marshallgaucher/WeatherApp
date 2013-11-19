@@ -28,7 +28,9 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * Created by Marshall Gaucher on 11/12/13.
+ * Created by Marshall Gaucher and Dean Laganiere on 11/12/13.
+ *
+ * Forecast parcelable to hold the JSON weather fields and image.
  */
 public class Forecast implements Parcelable{
     public Bitmap Image;
@@ -45,6 +47,10 @@ public class Forecast implements Parcelable{
     public String WindDirection;
     public String WindSpeed;
 
+    /**
+     *  Reads Forecast information and image from parcel.
+     *
+     */
     public Forecast()
     {
         ChancePrecipitation =null;
@@ -62,6 +68,11 @@ public class Forecast implements Parcelable{
         Image = null;
     }
 
+    /**
+     *  Reads Forecast information and image from parcel.
+     *
+     * @param parcel
+     */
     private Forecast(Parcel parcel)
     {
         Image = parcel.readParcelable(Bitmap.class.getClassLoader());
@@ -85,6 +96,12 @@ public class Forecast implements Parcelable{
         return 0;
     }
 
+    /**
+     *  Writes forecast information to destination parcel.
+     *
+     * @param dest
+     * @param flags
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags)
     {
@@ -103,6 +120,9 @@ public class Forecast implements Parcelable{
         dest.writeString(WindSpeed);
     }
 
+    /**
+     * Marshaler for Forecast parcelable.
+     */
     public static final Parcelable.Creator<Forecast> Creator = new Parcelable.Creator<Forecast>()
     {
         @Override
@@ -118,6 +138,9 @@ public class Forecast implements Parcelable{
         }
     };
 
+    /**
+     * Async task to make API call for loading a forecast
+     */
     public static class LoadForecast extends AsyncTask<String, Void, Forecast>
     {
         private IListeners _listener;
@@ -126,12 +149,24 @@ public class Forecast implements Parcelable{
 
         private int bitmapSampleSize = -1;
 
+        /**
+         * Set the context and listener interface
+         *
+         * @param context
+         * @param listener
+         */
         public LoadForecast(Context context, IListeners listener)
         {
             _context = context;
             _listener = listener;
         }
 
+        /**
+         * Connects to the Forecast URL and parse the JSON Weather object
+         *
+         * @param params
+         * @return
+         */
         protected Forecast doInBackground(String... params)
         {
             Forecast forecast = null;
@@ -178,6 +213,11 @@ public class Forecast implements Parcelable{
             return forecast;
         }
 
+        /**
+         * Inform the listener interface that a weather forecast has been loaded.
+         *
+         * @param forecast
+         */
         protected void onPostExecute(Forecast forecast)
         {
             if (!_errorMessage.equalsIgnoreCase("")) {
@@ -187,6 +227,13 @@ public class Forecast implements Parcelable{
             _listener.onForecastLoaded(forecast);
         }
 
+        /**
+         * Read the icon bitmap into a stream from the image url.
+         *
+         * @param conditionString
+         * @param bitmapSampleSize
+         * @return
+         */
         private Bitmap readIconBitmap(String conditionString, int bitmapSampleSize)
         {
             Bitmap iconBitmap = null;
@@ -224,6 +271,12 @@ public class Forecast implements Parcelable{
             return iconBitmap;
         }
 
+        /**
+         * Reads JSON object passed from the object reader to parse out hourly forecast weather fields.
+         *
+         * @param jsonString
+         * @return
+         */
         public Forecast readJSON(String jsonString)
         {
             List<Forecast> forecastList = new Vector<Forecast>();
